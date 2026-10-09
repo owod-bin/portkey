@@ -1,0 +1,26 @@
+{
+  "name": "portkey",
+  "version": "1.0.0",
+  "description": "Portkey —— 绿色版内网穿透客户端，一把钥匙把局域网服务带到公网",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "dependencies": {
+    "ssh2": "^1.17.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "keywords": [
+    "tunnel",
+    "reverse-tunnel",
+    "ssh-tunnel",
+    "nat-traversal",
+    "port-forwarding",
+    "portable",
+    "内网穿透"
+  ]
+}

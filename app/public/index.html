@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portkey</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="side-brand">
+      <svg viewBox="0 0 32 32" class="brand-mark" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="#2563eb"/>
+        <circle cx="16" cy="11.8" r="4.8" fill="#fff"/>
+        <path d="M13.6 15.4h4.8l1.7 8.6a1.2 1.2 0 01-1.2 1.5h-5.8a1.2 1.2 0 01-1.2-1.5z" fill="#fff"/>
+      </svg>
+      <div class="brand-name">
+        <strong>Portkey</strong>
+        <span>内网穿透 · v1.0.0</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-page="overview">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2.5" y="2.5" width="6" height="6" rx="1.8"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.8"/>
+          <rect x="2.5" y="11.5" width="6" height="6" rx="1.8"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.8"/>
+        </svg>
+        <span>概览</span>
+      </button>
+      <button class="nav-item" data-page="rules">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.2 11.8l3.6-3.6"/><path d="M11.6 5.6l1-1a3.4 3.4 0 014.8 4.8l-1 1"/><path d="M8.4 14.4l-1 1a3.4 3.4 0 01-4.8-4.8l1-1"/>
+        </svg>
+        <span>端口映射</span>
+        <em class="nav-count" id="nav-rule-count">0</em>
+      </button>
+      <button class="nav-item" data-page="server">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2.5" y="3" width="15" height="6" rx="2"/><rect x="2.5" y="11" width="15" height="6" rx="2"/>
+          <circle cx="6" cy="6" r=".9" fill="currentColor" stroke="none"/><circle cx="6" cy="14" r=".9" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>服务器</span>
+      </button>
+      <button class="nav-item" data-page="logs">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 3h6.5L16 7.5V16a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 014 16V4.5A1.5 1.5 0 015.5 3z"/>
+          <path d="M11 3v5h5"/><path d="M7 11h6M7 14h4"/>
+        </svg>
+        <span>运行日志</span>
+      </button>
+    </nav>
+
+    <div class="side-foot">
+      <div class="side-status">
+        <span class="dot" id="side-dot"></span>
+        <div class="side-status-text">
+          <b id="side-status">未连接</b>
+          <small id="side-host">尚未配置服务器</small>
+        </div>
+      </div>
+      <div class="side-tools">
+        <button class="icon-btn" id="btn-theme" title="切换深色 / 浅色"></button>
+        <button class="icon-btn" id="btn-notify" title="开启桌面通知"></button>
+        <button class="btn ghost tiny" id="btn-quit">退出程序</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="page-head">
+      <div class="page-title">
+        <h1 id="page-title">概览</h1>
+        <p id="page-desc">查看隧道状态与公网访问地址</p>
+      </div>
+      <div class="head-actions">
+        <span class="pill" id="status-pill"><i></i><span id="status-text">未连接</span></span>
+        <button class="btn ghost" id="btn-restart">重启隧道</button>
+        <button class="btn primary" id="btn-connect">一键连接</button>
+      </div>
+    </header>
+
+    <!-- ============ 概览 ============ -->
+    <section class="page active" id="page-overview">
+      <div id="overview-alert"></div>
+
+      <div class="hero" id="hero">
+        <div class="hero-main">
+          <span class="hero-dot" id="hero-dot"></span>
+          <div>
+            <h2 id="hero-title">尚未连接</h2>
+            <p id="hero-sub">在「服务器」页填写 SSH 信息后点「一键连接」</p>
+          </div>
+        </div>
+        <div class="hero-side" id="hero-side"></div>
+      </div>
+
+      <div class="metrics" id="stats"></div>
+
+      <div class="card" id="chart-card">
+        <div class="card-head">
+          <div>
+            <h2>实时速率</h2>
+            <p id="chart-sub">隧道建立后开始统计</p>
+          </div>
+          <div class="legend">
+            <span><i class="lg-down"></i>下载 <b id="rate-in">0 B/s</b></span>
+            <span><i class="lg-up"></i>上传 <b id="rate-out">0 B/s</b></span>
+          </div>
+        </div>
+        <div class="card-body chart-body">
+          <canvas id="rate-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card" id="addr-card">
+        <div class="card-head">
+          <div>
+            <h2>公网访问地址</h2>
+            <p>在任意联网设备（手机 / 电脑）上打开即可</p>
+          </div>
+          <button class="btn tiny" data-goto="rules">管理映射</button>
+        </div>
+        <div class="card-body" id="addr-list"></div>
+      </div>
+
+      <div class="card" id="server-card">
+        <div class="card-head">
+          <div>
+            <h2>服务器状态</h2>
+            <p id="server-sub">连接后通过 SSH 每 5 秒采集</p>
+          </div>
+          <span class="chip" id="server-os"></span>
+        </div>
+        <div class="card-body" id="server-stats"></div>
+      </div>
+
+      <div class="card" id="report-card">
+        <div class="card-head">
+          <div>
+            <h2>服务器自动配置</h2>
+            <p>连接时程序在服务器上自动完成的步骤</p>
+          </div>
+          <button class="btn tiny" id="btn-provision">重新配置</button>
+        </div>
+        <div class="card-body"><ol class="timeline" id="provision-report"></ol></div>
+      </div>
+    </section>
+
+    <!-- ============ 端口映射 ============ -->
+    <section class="page" id="page-rules">
+      <div id="release-alert"></div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>添加映射</h2>
+            <p>把内网的一个端口映射到服务器的公网端口</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="add-grid">
+            <label class="fld"><span>内网地址</span><input id="r-host" value="127.0.0.1" placeholder="127.0.0.1"></label>
+            <label class="fld"><span>内网端口</span><input id="r-local" type="number" placeholder="80"></label>
+            <label class="fld"><span>公网端口</span><input id="r-remote" type="number" placeholder="8080"></label>
+            <label class="fld"><span>服务类型</span>
+              <select id="r-proto">
+                <option value="auto">自动识别</option>
+                <option value="http">网页 HTTP</option>
+                <option value="https">网页 HTTPS</option>
+                <option value="tcp">其他 TCP（远程桌面等）</option>
+              </select>
+            </label>
+            <label class="fld"><span>备注</span><input id="r-name" placeholder="选填，如 家里 NAS"></label>
+            <button class="btn primary" id="btn-add">添加映射</button>
+          </div>
+          <p class="hint" id="add-hint"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>映射列表</h2>
+            <p id="rules-summary">暂无映射</p>
+          </div>
+          <span class="chip" id="lan-ips"></span>
+        </div>
+        <div class="card-body" id="rules-table"></div>
+      </div>
+    </section>
+
+    <!-- ============ 服务器 ============ -->
+    <section class="page" id="page-server">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>SSH 连接信息</h2>
+            <p>程序用这些信息登录你的服务器并自动完成全部配置，服务器上无需安装任何软件</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <label class="fld"><span>服务器地址</span><input id="s-host" placeholder="公网 IP 或域名"></label>
+            <label class="fld"><span>SSH 端口</span><input id="s-port" type="number" value="22"></label>
+            <label class="fld"><span>用户名</span><input id="s-user" placeholder="root"></label>
+            <label class="fld"><span>登录密码</span><input id="s-pass" type="password" placeholder="SSH 登录密码"></label>
+            <label class="fld"><span>sudo 密码</span><input id="s-sudo" type="password" placeholder="非 root 用户填写"></label>
+            <label class="fld"><span>私钥路径</span><input id="s-key" placeholder="选填，替代密码"></label>
+          </div>
+
+          <div class="switch-list">
+            <label class="switch">
+              <input type="checkbox" id="o-remember" checked><i></i>
+              <div><b>记住密码</b><span>使用本机密钥加密后保存</span></div>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="o-autoconnect"><i></i>
+              <div><b>启动时自动连接</b><span>双击启动后立即建立隧道</span></div>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="o-autoreconnect" checked><i></i>
+              <div><b>断线自动重连</b><span>网络波动时自动恢复隧道</span></div>
+            </label>
+          </div>
+        </div>
+        <div class="card-foot">
+          <span class="muted tiny" id="server-note"></span>
+          <div class="row-actions">
+            <button class="btn" id="btn-test">测试连接</button>
+            <button class="btn" id="btn-provision2">仅配置服务器</button>
+            <button class="btn primary" id="btn-save">保存并连接</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div><h2>配置报告</h2><p>最近一次在服务器上执行的操作</p></div></div>
+        <div class="card-body"><ol class="timeline" id="provision-report2"></ol></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>配置备份</h2>
+            <p>导出的文件可在其它电脑导入，也可作为备份留存</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row-actions">
+            <button class="btn" id="btn-export">导出配置</button>
+            <button class="btn" id="btn-import">导入配置</button>
+            <input type="file" id="import-file" accept=".json,application/json" class="offscreen">
+          </div>
+          <p class="hint" id="backup-hint">导出时可选设置口令来一并加密登录凭据；不设口令则只导出服务器地址与映射规则。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 日志 ============ -->
+    <section class="page" id="page-logs">
+      <div class="card">
+        <div class="card-head">
+          <div><h2>运行日志</h2><p>记录连接、配置与流量转发的全过程</p></div>
+          <div class="log-tools">
+            <div class="seg" id="log-filter">
+              <button data-lv="all" class="active">全部</button>
+              <button data-lv="info">信息</button>
+              <button data-lv="warn">警告</button>
+              <button data-lv="error">错误</button>
+            </div>
+            <button class="btn tiny" id="btn-clear-view">清屏</button>
+          </div>
+        </div>
+        <div class="card-body"><div class="logbox" id="logbox"></div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="modal-mask" id="modal" style="display:none">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="modal-title"></h3>
+    <p id="modal-desc"></p>
+    <input id="modal-input" type="text" style="display:none">
+    <div class="modal-actions">
+      <button class="btn" id="modal-cancel">取消</button>
+      <button class="btn primary" id="modal-ok">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>
