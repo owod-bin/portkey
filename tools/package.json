@@ -10,7 +10,7 @@
     "test:ui": "node ui-test.js",
     "test:buttons": "node buttons-test.js"
   },
-  "dependencies": {
-    "jsdom": "^30.1.2"
+  "devDependencies": {
+    "jsdom": "^24.1.3"
   }
 }
